@@ -1,0 +1,58 @@
+############################ STREAMING EXAMPLE ############################
+
+# Generate Dataset with a single level shift outlier
+python synthetic_data_generator.py -o paper_figures/example/part1/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 --white_noise_std 0.12 -im level_shift --kernel epa --seed 2 --synthetic_num_periods 3 \
+--inj_num_regions 1 --inj_boost_percent 65 --bandwidth_selection custom --bandwidth 30000 -agg_m aggregate_prophet_model 
+
+# Use the previous dataset to inject a high residual outlier
+python synthetic_data_generator.py -o paper_figures/example/part2/ --input_time_series_df paper_figures/example/part1/df.pickle \
+--window_size 6H --num_points_per_window 6 --point_frequency 1H --confidence_interval_width 0.96 \
+-im high_residual_nearest --inj_gap_percent 0.05 --kernel epa --seed 1 \
+--inj_num_regions 1 --bandwidth_selection custom --bandwidth 30000 -agg_m aggregate_prophet_model
+
+# Use ISJ Bandwidth
+python simulate_streaming.py --output_dir paper_figures/example/part2/ISJ_bandwidth/ \
+--input_time_series_df paper_figures/example/part2/df.pickle \
+--regions_df paper_figures/example/part2/regions_df.pickle \
+--num_points_in_history 504 --streaming_num_points_step 4 --confidence_interval_width 0.96 \
+--aggregation_model aggregate_prophet_model --num_top_k_alerts 3 \
+--window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--kernel epa --bandwidth 20000 --seed 1 --bandwidth_selection ISJ --future_window_size 84 --evaluate_raised_alerts
+
+
+############################ STREAMING EXAMPLE ############################
+
+# Run steaming_example (Custom Bandwidth)
+python simulate_streaming.py --output_dir paper_figures/streaming_example/streaming_evaluation/ \
+--input_time_series_df paper_figures/streaming_example/df.pickle \
+--regions_df paper_figures/streaming_example/regions_df.pickle \
+--num_points_in_history 160 --streaming_num_points_step 4 --confidence_interval_width 0.98 \
+--aggregation_model aggregate_prophet_model --num_top_k_alerts 3 \
+--window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--kernel epa --bandwidth 20000 --seed 1 --bandwidth_selection custom --future_window_size 84 --evaluate_raised_alerts
+
+# Run steaming_example (ISJ Bandwidth)
+python simulate_streaming.py --output_dir paper_figures/streaming_example/ISJ_bandwidth/ \
+--input_time_series_df paper_figures/streaming_example/df.pickle \
+--regions_df paper_figures/streaming_example/regions_df.pickle \
+--num_points_in_history 160 --streaming_num_points_step 4 --confidence_interval_width 0.98 \
+--aggregation_model aggregate_prophet_model --num_top_k_alerts 3 \
+--window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--kernel epa --bandwidth 20000 --seed 1 --bandwidth_selection ISJ --future_window_size 84 --evaluate_raised_alerts
+
+
+# Testing MDI (Offline)
+python libmaxdiv/get_mdi_regions.py --output_dir synthetic_data/synthetic_experiments/all_outlier_types_098/seed1/evaluation/mdi/ \
+--input_time_series_df synthetic_data/synthetic_experiments/all_outlier_types_098/seed1/df.pickle \
+--method gaussian_cov --num_intervals 10 --proposals dense --mode TS \
+--extint_min_len 12 --extint_max_len 48 --td_dim 0 --td_lag 0
+
+# Testing MDI (Streaming)
+python libmaxdiv/mdi_simulate_streaming.py \
+--output_dir streaming_data/synthetic_data/variable_inj_region_length/12_48/seed_2/evaluation/mdi/ \
+--input_time_series_df streaming_data/synthetic_data/variable_inj_region_length/12_48/seed_2/df.pickle \
+--regions_df streaming_data/synthetic_data/variable_inj_region_length/12_48/seed_2/regions_df.pickle \
+--num_points_in_history 2016 --streaming_num_points_step 6 \
+--method gaussian_cov --num_intervals 10 --proposals dense --mode TS \
+--extint_min_len 12 --extint_max_len 48 --td_dim 0 --td_lag 0

@@ -1,0 +1,159 @@
+
+#### LEVEL SHIFT ######
+
+# Level Shift (Moving Average Aggregate Model)
+python synthetic_data_generator.py -o synthetic_data/level_shift/ma/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im level_shift --clustering_mode KDE --seed 1 \
+-im level_shift --inj_num_regions 30 --inj_region_length 24 --inj_boost_percent 50 \
+aggregate_ma_model --rolling_window_size 10
+
+# Level Shift (Prophet Aggregate Model)
+python synthetic_data_generator.py -o synthetic_data/level_shift/prophet/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im level_shift --clustering_mode KDE --seed 1 --synthetic_num_periods 86 --bandwidth 86400 \
+-im level_shift --inj_num_regions 30 --inj_region_length 24 --inj_boost_percent 50 \
+ aggregate_prophet_model
+
+# Level Shift (Small Example)
+python synthetic_data_generator.py -o synthetic_data/level_shift/small_example/prophet/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im level_shift --clustering_mode KDE --seed 5 --synthetic_num_periods 16 \
+-im level_shift --inj_num_regions 3 --inj_region_length 24 --inj_boost_percent 50 \
+aggregate_prophet_model
+
+
+
+####### HIGH RESIDUAL (CONSISTENT) ####### 
+
+# High Residual Consistent (Moving Average Aggregate Model)
+python synthetic_data_generator.py -o synthetic_data/high_residual/consistent/ma/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im high_residual -rm consistent --clustering_mode KDE --seed 1 \
+-im level_shift --inj_num_regions 30 --inj_region_length 24 --inj_boost_percent 50 \
+ aggregate_ma_model --rolling_window_size 10
+
+# High Residual Consistent (Prophet Aggregate Model)
+python synthetic_data_generator.py -o synthetic_data/high_residual/consistent/prophet/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im high_residual -rm consistent --clustering_mode KDE --seed 1 --synthetic_num_periods 86 --bandwidth 86400 \
+--inj_num_regions 30 --inj_region_length 24 \
+aggregate_prophet_model
+
+####### HIGH RESIDUAL (NEAREST) ####### 
+
+# High Residual Nearest (Moving Average Aggregate Model)
+python synthetic_data_generator.py -o synthetic_data/high_residual/nearest/ma/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im high_residual -rm nearest --clustering_mode KDE --seed 1 \
+-im level_shift --inj_num_regions 30 --inj_region_length 24 --inj_boost_percent 50 \
+ aggregate_ma_model --rolling_window_size 10
+
+# High Residual Consistent (Prophet Aggregate Model)
+python synthetic_data_generator.py -o synthetic_data/high_residual/nearest/prophet/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im high_residual -rm nearest --clustering_mode KDE --seed 1 --synthetic_num_periods 86 --bandwidth 86400 \
+--inj_num_regions 30 --inj_region_length 24 --inj_boost_percent 50 \
+aggregate_prophet_model
+
+
+####### Synthetic Data with outlier injection rate ####### 
+python synthetic_data_generator.py -o synthetic_data/testing/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im all --kernel gaussian --seed 1 --synthetic_num_periods 60 --bandwidth 86400 \
+--inj_num_regions 15 --variable_inj_region_length 12 48 --inj_boost_percent 50 --outlier_injection_rate 0.7 \
+aggregate_prophet_model
+
+
+######## REAL DATASET ########
+
+# (Moving Average Aggregate Model) 
+python synthetic_data_generator.py -o real_data/no_injection/ma/ --input_time_series_df real_data/data_df.pickle --input_regions_df real_data/regions_df.pickle \
+--window_size 4D --num_points_per_window 4 --point_frequency 1D \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 aggregate_ma_model --rolling_window_size 4 --num_std_dev_for_outlier 1.4 --bandwidth 1382400
+
+# (Prophet Aggregate Model) 
+python synthetic_data_generator.py -o real_data/no_injection/prophet/ --input_time_series_df real_data/data_df.pickle --input_regions_df real_data/regions_df.pickle \
+--window_size 4D --num_points_per_window 4 --point_frequency 1D \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 --bandwidth 1382400 \
+aggregate_prophet_model
+
+# Smaller Datasets
+
+# High residual consistent (prophet)
+python synthetic_data_generator.py -o synthetic_data/high_residual/consistent/prophet/ --window_size 6H --num_points_per_window 6 --point_frequency 1H \
+--confidence_interval_width 0.95 -im high_residual -rm consistent --clustering_mode KDE --seed 1 --synthetic_num_periods 30 --bandwidth 86400 \
+--inj_num_regions 10 --inj_region_length 24 \
+aggregate_prophet_model
+
+
+
+######## STREAMING REAL DATA ########
+
+# df0 (2020-9-25)
+python synthetic_data_generator.py -o real_data/streaming/df0/ --input_time_series_df real_data/streaming/data/df0.pickle --input_regions_df real_data/regions_df.pickle \
+--window_size 4D --num_points_per_window 4 --point_frequency 1D \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 --bandwidth 864000 \
+aggregate_prophet_model
+
+# df1 (2020-09-29)
+python synthetic_data_generator.py -o real_data/streaming/df1/ --input_time_series_df real_data/streaming/data/df1.pickle --input_regions_df real_data/regions_df.pickle \
+--window_size 4D --num_points_per_window 4 --point_frequency 1D \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 --bandwidth 864000 \
+aggregate_prophet_model
+
+# df2 (2020-09-30)
+python synthetic_data_generator.py -o real_data/streaming/df2/ --input_time_series_df real_data/streaming/data/df2.pickle --input_regions_df real_data/regions_df.pickle \
+--window_size 4D --num_points_per_window 4 --point_frequency 1D \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 --bandwidth 864000 \
+aggregate_prophet_model
+
+
+######## STREAMING Simulation ########
+
+# high_residual consistent
+python simulate_streaming.py --output_dir streaming_data/high_residual/consistent/ --input_time_series_df streaming_data/high_residual/consistent/df_full.pickle \
+--num_points_in_history 1260 --streaming_num_points_step 6 --confidence_interval_width 0.95 --aggregation_model aggregate_prophet_model \
+--window_size 6H --num_points_per_window 6 --point_frequency 1H --kernel epanechnikov --bandwidth 172800
+
+# all_outlier_types
+python simulate_streaming.py --output_dir streaming_data/all_outlier_types/ISJ/ \
+--input_time_series_df streaming_data/all_outlier_types/df_full.pickle \
+--num_points_in_history 2016 --streaming_num_points_step 6 --confidence_interval_width 0.98 \
+--aggregation_model aggregate_prophet_model \
+--window_size 6H --num_points_per_window 6 --point_frequency 1H --kernel epa --bandwidth 86400 --seed 1 --bandwidth_selection ISJ
+
+
+######## Real Data NAB Data Corpus ########
+
+# art_daily_jumpsdown_df
+python synthetic_data_generator.py -o real_data/NAB/art_daily_jumpsdown/ --input_time_series_df data/time_series_dataframes/art_daily_jumpsdown_df.pickle \
+--input_regions_df data/region_dataframes/art_daily_jumpsdown_df.pickle \
+--window_size 1H --num_points_per_window 12 --point_frequency 5min \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 --bandwidth 43200 aggregate_prophet_model
+
+# nyc_taxi
+python synthetic_data_generator.py -o real_data/NAB/nyc_taxi/ --input_time_series_df data/time_series_dataframes/nyc_taxi_df.pickle \
+--input_regions_df data/region_dataframes/nyc_taxi_df.pickle \
+--window_size 4H --num_points_per_window 8 --point_frequency 30min \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 --bandwidth 86400 aggregate_prophet_model
+
+
+######## Testing ########
+python synthetic_data_generator.py -o synthetic_data/testing/ --window_size 6H --num_points_per_window 6 \
+--point_frequency 1H --confidence_interval_width 0.98 \
+--injection_mode all --kernel gaussian --synthetic_num_periods 60 --bandwidth 86400 \
+--inj_num_regions 10 --inj_region_length 24 --outlier_injection_rate 1.0 \
+--seed 1 --white_noise_std 0.05 aggregate_prophet_model
+
+
+
+
+
+######## MDI Synthetic Data ########
+python synthetic_data_generator.py -o synthetic_data/mdi_synthetic_data/meanshift5/0/ --window_size 2D --num_points_per_window 48 \
+--point_frequency 1H --confidence_interval_width 0.90 \
+--bandwidth $bandwidth 240000 --input_time_series_df synthetic_data/mdi_synthetic_data/meanshift5/0/df.pickle \
+--input_regions_df synthetic_data/mdi_synthetic_data/meanshift5/0/regions_df.pickle aggregate_ma_model
+
+--input_time_series_df synthetic_data/mdi_synthetic_data/meanshift/0/df.pickle \
+--input_regions_df synthetic_data/mdi_synthetic_data/meanshift/0/regions_df.pickle --window_size 4D   \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 --bandwidth 360000 aggregate_prophet_model
+
+
+python synthetic_data_generator.py -o real_data/no_injection/prophet/ --input_time_series_df real_data/data_df.pickle --input_regions_df real_data/regions_df.pickle \
+--window_size 4D --num_points_per_window 4 --point_frequency 1D \
+--confidence_interval_width 0.95 --clustering_mode KDE --seed 1 --bandwidth 1382400 \
+aggregate_prophet_model
